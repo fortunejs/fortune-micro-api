@@ -85,7 +85,7 @@ run(() => {
 run(() => {
   comment('match on a collection')
   return test(`/users?${qs.stringify({
-    'match[name]': 'John Doe',
+    'match[name]': 'John Doe,Jane Doe',
     'match[birthday]': '1992-12-07'
   })}`, null, response => {
     equal(response.status, 200, 'status is correct')
