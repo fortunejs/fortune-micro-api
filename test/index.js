@@ -152,6 +152,7 @@ run(() => {
         name: 'Rover',
         birthday: new Date().toJSON(),
         picture: new Buffer('This is a string.').toString('base64'),
+        nicknames: [ 'Foo', 'Bar' ],
         owner: { 'id': 1 }
       } ]
     }
@@ -218,7 +219,7 @@ run(() => {
 
 
 run(() => {
-  comment('update record')
+  comment('update record #1')
   return test('/users/2', {
     method: 'patch',
     headers: { 'Content-Type': mediaType },
@@ -230,6 +231,26 @@ run(() => {
         spouse: { id: 3 },
         enemies: { id: [ 3 ] },
         friends: { id: [ 1, 3 ] }
+      } ]
+    }
+  }, response => {
+    equal(response.status, 200, 'status is correct')
+    ok(Math.abs(new Date(response.body['@graph'][0].lastModified).getTime() -
+      Date.now()) < 5 * 1000, 'update modifier is correct')
+  })
+})
+
+
+run(() => {
+  comment('update record #2')
+  return test('/animals/2', {
+    method: 'patch',
+    headers: { 'Content-Type': mediaType },
+    body: {
+      '@graph': [ {
+        '@type': 'animal',
+        id: 2,
+        nicknames: [ 'Baz', 'Qux' ]
       } ]
     }
   }, response => {

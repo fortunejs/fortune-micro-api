@@ -1,7 +1,7 @@
 {
   "name": "fortune-micro-api",
   "description": "Micro API serializer for Fortune.",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "license": "MIT",
   "author": {
     "email": "0x8890@airmail.cc",
@@ -28,9 +28,8 @@
   },
   "devDependencies": {
     "babel": "^5.8.21",
-    "babel-eslint": "^4.0.10",
     "eslint": "^1.2.1",
-    "fortune": "^1.1.2",
+    "fortune": "^1.2.0",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.4.2"
   },
