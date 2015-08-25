@@ -36,6 +36,7 @@ The `options` object is as follows:
 
 Internal options:
 
+- `castId`: try to cast string IDs to numbers if possible. Default: `true`.
 - `queries`: queries to support, must be a set.
 - `uriTemplate`: URI template string.
 - `allowLevel`: HTTP methods to allow ordered by appearance in URI template.
