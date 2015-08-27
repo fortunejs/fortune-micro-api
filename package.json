@@ -29,7 +29,7 @@
   "devDependencies": {
     "babel": "^5.8.21",
     "eslint": "^1.2.1",
-    "fortune": "^1.2.2",
+    "fortune": "^1.2.3",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.4.3"
   },

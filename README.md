@@ -46,7 +46,7 @@ Internal options:
 
 ## Type Definition
 
-This serializer interprets a special field on the type definition: `isReverse`:
+This serializer interprets a special field on type definitions: `isReverse`:
 
 ```js
 store.defineType('person', {
