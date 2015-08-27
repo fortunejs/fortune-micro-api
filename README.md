@@ -44,7 +44,7 @@ Internal options:
 - `allowLevel`: HTTP methods to allow ordered by appearance in URI template.
 
 
-## Type Definition
+## Extension
 
 This serializer interprets a special field on type definitions: `isReverse`:
 
