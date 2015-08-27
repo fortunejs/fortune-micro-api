@@ -1,4 +1,4 @@
-# Fortune Micro API Serializer
+# Fortune Micro API (JSON-LD) Serializer
 
 [![Build Status](https://img.shields.io/travis/fortunejs/fortune-micro-api/master.svg?style=flat-square)](https://travis-ci.org/fortunejs/fortune-micro-api)
 [![npm Version](https://img.shields.io/npm/v/fortune-micro-api.svg?style=flat-square)](https://www.npmjs.com/package/fortune)
@@ -27,7 +27,8 @@ const store = fortune.create({
 
 The `options` object is as follows:
 
-- `inflectPath`: pluralize the record type name in the URI. Default: `true`.
+- `inflectPath`: pluralize and dasherize the record type name in the URI. Default: `true`.
+- `inflectType`: convert record type name to *PascalCase* in the payload. Default: `true`.
 - `maxLimit`: maximum number of records to show per page. Default: `1000`.
 - `includeLimit`: maximum depth of fields per include. Default: `3`.
 - `bufferEncoding`: which encoding type to use for input buffer fields. Default: `base64`.
@@ -38,9 +39,26 @@ The `options` object is as follows:
 
 Internal options:
 
-- `castId`: try to cast string IDs to numbers if possible. Default: `true`.
+- `castId`: try to cast string IDs to numbers if possible. Default: `false`.
 - `uriTemplate`: URI template string.
 - `allowLevel`: HTTP methods to allow ordered by appearance in URI template.
+
+
+## Type Definition
+
+This serializer interprets a special field on the type definition: `isReverse`:
+
+```js
+store.defineType('person', {
+  actedIn: { link: 'movie', inverse: 'actor', isArray: true, isReverse: true }
+})
+
+store.defineType('movie', {
+  actor: { link: 'person', inverse: 'actedIn', isArray: true }
+})
+```
+
+This will tell the serializer to rely on the `@reverse` property.
 
 
 ## License

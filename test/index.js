@@ -6,7 +6,9 @@ import microApi from '../lib'
 
 const mediaType = 'application/vnd.micro+json'
 const test = httpTest.bind(null, {
-  serializers: [ { type: microApi, options: { obfuscateURIs: false } } ]
+  serializers: [ { type: microApi, options: {
+    obfuscateURIs: false, castId: true
+  } } ]
 })
 
 
@@ -16,15 +18,13 @@ run(() => {
     equal(response.status, 200, 'status is correct')
     equal(response.headers.get('content-type'), mediaType,
       'content type is correct')
-    equal(Object.keys(response.body['@links']).length,
-      3, 'number of types correct')
-    ok(!response.body['@links'].user.enemies['@inverse'],
-      'denormalized inverse is missing')
+    equal(Object.keys(response.body).length,
+      4, 'number of types correct')
   })
 })
 
 
-run(() => {
+run.only(() => {
   comment('show collection')
   return test('/users', null, response => {
     equal(response.status, 200, 'status is correct')
