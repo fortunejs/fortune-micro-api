@@ -1,4 +1,4 @@
-# Fortune Micro API (JSON-LD) Serializer
+# Fortune Micro API Serializer
 
 [![Build Status](https://img.shields.io/travis/fortunejs/fortune-micro-api/master.svg?style=flat-square)](https://travis-ci.org/fortunejs/fortune-micro-api)
 [![npm Version](https://img.shields.io/npm/v/fortune-micro-api.svg?style=flat-square)](https://www.npmjs.com/package/fortune)
