@@ -7,7 +7,10 @@ import microApi from '../lib'
 const mediaType = 'application/vnd.micro+json'
 const test = httpTest.bind(null, {
   serializers: [ { type: microApi, options: {
-    obfuscateURIs: false, castId: true
+    vocabulary: 'http://example.com/',
+    base: 'http://api.example.com/',
+    obfuscateURIs: false,
+    castId: true
   } } ]
 })
 
@@ -151,19 +154,23 @@ run(() => {
 })
 
 
-run.only(() => {
+run(() => {
   comment('create record')
   return test('/animals', {
     method: 'post',
     headers: { 'Content-Type': mediaType },
     body: {
+      '@context': {
+        '@vocab': 'http://example.com/',
+        'µ': 'http://micro-api.org/'
+      },
       '@graph': [ {
-        '@type': 'animal',
+        '@type': 'Animal',
         name: 'Rover',
         birthday: new Date().toJSON(),
         picture: new Buffer('This is a string.').toString('base64'),
         nicknames: [ 'Foo', 'Bar' ],
-        owner: { 'id': 1 }
+        owner: { 'µ:id': 1 }
       } ]
     }
   }, response => {
@@ -173,7 +180,7 @@ run.only(() => {
     equal(response.headers.get('location'), response.body['@graph'][0]
       ['@id'], 'location header is correct')
     ok(response.body['@graph'][0]['@type'], 'type is correct')
-    equal(response.body['@graph'][0].owner.id, 1, 'link is correct')
+    equal(response.body['@graph'][0].owner['µ:id'], 1, 'link is correct')
     equal(new Buffer(response.body['@graph'][0].picture, 'base64')
       .toString(), 'This is a string.', 'buffer is correct')
     ok(Date.now() - new Date(response.body['@graph'][0].birthday)
@@ -186,17 +193,21 @@ run.only(() => {
 
 run(() => {
   comment('create record with existing ID should fail')
-  return test('/user', {
+  return test('/users', {
     method: 'post',
     headers: { 'Content-Type': mediaType },
     body: {
-      '@graph': [ { '@type': 'user', id: 1 } ]
+      '@context': {
+        '@vocab': 'http://example.com/',
+        'µ': 'http://micro-api.org/'
+      },
+      '@graph': [ { '@type': 'User', 'µ:id': 1 } ]
     }
   }, response => {
     equal(response.status, 409, 'status is correct')
     ok(~response.headers.get('content-type').indexOf(mediaType),
       'content type is correct')
-    ok(response.body['@error'], 'error exists')
+    ok(response.body['µ:error'], 'error exists')
   })
 })
 
@@ -212,18 +223,18 @@ run(() => {
       'content type is correct')
     equal(response.headers.get('allow'),
       'GET, PATCH, DELETE', 'allow header is correct')
-    ok(response.body['@error'], 'error exists')
+    ok(response.body['µ:error'], 'error exists')
   })
 })
 
 
 run(() => {
-  comment('create record with wrong type should fail')
+  comment('create record with wrong media type should fail')
   return test('/users', { method: 'post' }, response => {
     equal(response.status, 415, 'status is correct')
     ok(~response.headers.get('content-type').indexOf(mediaType),
       'content type is correct')
-    ok(response.body['@error'], 'error exists')
+    ok(response.body['µ:error'], 'error exists')
   })
 })
 
@@ -234,13 +245,17 @@ run(() => {
     method: 'patch',
     headers: { 'Content-Type': mediaType },
     body: {
+      '@context': {
+        '@vocab': 'http://example.com/',
+        'µ': 'http://micro-api.org/'
+      },
       '@graph': [ {
-        '@type': 'user',
-        id: 2,
+        '@type': 'User',
+        'µ:id': 2,
         name: 'Jenny Death',
-        spouse: { id: 3 },
-        enemies: { id: [ 3 ] },
-        friends: { id: [ 1, 3 ] }
+        spouse: { 'µ:id': 3 },
+        enemies: { 'µ:id': [ 3 ] },
+        friends: { 'µ:id': [ 1, 3 ] }
       } ]
     }
   }, response => {
@@ -259,9 +274,13 @@ run(() => {
     method: 'patch',
     headers: { 'Content-Type': mediaType },
     body: {
+      '@context': {
+        '@vocab': 'http://example.com/',
+        'µ': 'http://micro-api.org/'
+      },
       '@graph': [ {
-        '@type': 'animal',
-        id: 2,
+        '@type': 'Animal',
+        'µ:id': 2,
         nicknames: [ 'Baz', 'Qux' ]
       } ]
     }
