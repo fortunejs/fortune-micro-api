@@ -27,7 +27,7 @@ const store = fortune.create({
 
 The `options` object is as follows:
 
-- `inflectPath`: pluralize and dasherize the record type name in the URI. Default: `true`.
+- `inflectPath`: pluralize the record type name in the URI. Default: `true`.
 - `inflectType`: convert record type name to *PascalCase* in the payload. Default: `true`.
 - `maxLimit`: maximum number of records to show per page. Default: `1000`.
 - `includeLimit`: maximum depth of fields per include. Default: `3`.
