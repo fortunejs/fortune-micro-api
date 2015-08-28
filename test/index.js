@@ -19,7 +19,7 @@ run(() => {
   comment('show index')
   return test('/', null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     equal(Object.keys(response.body).length,
       4, 'number of types correct')
@@ -31,7 +31,7 @@ run(() => {
   comment('show collection')
   return test('/users', null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     equal(response.body['@graph'].length,
       3, 'number of records correct')
@@ -45,7 +45,7 @@ run(() => {
     'include': 'spouse,spouse.friends'
   })}`, null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     equal(response.body['@graph'].length,
       3, 'number of records correct')
@@ -59,7 +59,7 @@ run(() => {
     'fields[animal]': 'birthday,type'
   })}`, null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     equal(response.body['@graph'].length,
       1, 'number of records correct')
@@ -77,7 +77,7 @@ run(() => {
     'fields[user]': 'name,birthday'
   })}`, null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     deepEqual(
       response.body['@graph'].map(record => record.name),
@@ -94,7 +94,7 @@ run(() => {
     'match[birthday]': '1992-12-07'
   })}`, null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     deepEqual(
       response.body['@graph'].map(record => record.name).sort(),
@@ -107,7 +107,7 @@ run(() => {
   comment('show related records')
   return test('/users/2/ownedPets', null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     equal(response.body['@graph'].length,
       2, 'number of records correct')
@@ -119,7 +119,7 @@ run(() => {
   comment('find an empty collection')
   return test(encodeURI('/☯s'), null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(Array.isArray(response.body['@graph']) &&
       !response.body['@graph'].length,
@@ -132,7 +132,7 @@ run(() => {
   comment('find a single non-existent record')
   return test('/users/4', null, response => {
     equal(response.status, 404, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok('µ:error' in response.body, 'error object exists')
     equal(response.body['µ:error'].name, 'NotFoundError', 'name is correct')
@@ -145,7 +145,7 @@ run(() => {
   comment('find a collection of non-existent related records')
   return test('/users/3/ownedPets', null, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(Array.isArray(response.body['@graph']) &&
       !response.body['@graph'].length,
@@ -175,9 +175,9 @@ run(() => {
     }
   }, response => {
     equal(response.status, 201, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(response.headers.get('location'), response.body['@graph'][0]
+    equal(response.headers['location'], response.body['@graph'][0]
       ['@id'], 'location header is correct')
     ok(response.body['@graph'][0]['@type'], 'type is correct')
     equal(response.body['@graph'][0].owner['µ:id'], 1, 'link is correct')
@@ -205,7 +205,7 @@ run(() => {
     }
   }, response => {
     equal(response.status, 409, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(response.body['µ:error'], 'error exists')
   })
@@ -219,9 +219,9 @@ run(() => {
     headers: { 'Content-Type': mediaType }
   }, response => {
     equal(response.status, 405, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(response.headers.get('allow'),
+    equal(response.headers['allow'],
       'GET, PATCH, DELETE', 'allow header is correct')
     ok(response.body['µ:error'], 'error exists')
   })
@@ -232,7 +232,7 @@ run(() => {
   comment('create record with wrong media type should fail')
   return test('/users', { method: 'post' }, response => {
     equal(response.status, 415, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(response.body['µ:error'], 'error exists')
   })
@@ -260,7 +260,7 @@ run(() => {
     }
   }, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(Math.abs(new Date(response.body['@graph'][0].lastModified).getTime() -
       Date.now()) < 5 * 1000, 'update modifier is correct')
@@ -286,7 +286,7 @@ run(() => {
     }
   }, response => {
     equal(response.status, 200, 'status is correct')
-    ok(~response.headers.get('content-type').indexOf(mediaType),
+    ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(Math.abs(new Date(response.body['@graph'][0].lastModified).getTime() -
       Date.now()) < 5 * 1000, 'update modifier is correct')
@@ -306,7 +306,7 @@ run(() => {
   comment('respond to options: index')
   return test('/', { method: 'options' }, response => {
     equal(response.status, 204, 'status is correct')
-    equal(response.headers.get('allow'),
+    equal(response.headers['allow'],
       'GET', 'allow header is correct')
   })
 })
@@ -316,7 +316,7 @@ run(() => {
   comment('respond to options: collection')
   return test('/users', { method: 'options' }, response => {
     equal(response.status, 204, 'status is correct')
-    equal(response.headers.get('allow'),
+    equal(response.headers['allow'],
       'GET, POST, PATCH, DELETE', 'allow header is correct')
   })
 })
@@ -326,7 +326,7 @@ run(() => {
   comment('respond to options: IDs')
   return test('/users/3', { method: 'options' }, response => {
     equal(response.status, 204, 'status is correct')
-    equal(response.headers.get('allow'),
+    equal(response.headers['allow'],
       'GET, PATCH, DELETE', 'allow header is correct')
   })
 })
@@ -336,7 +336,7 @@ run(() => {
   comment('respond to options: related')
   return test('/users/3/ownedPets', { method: 'options' }, response => {
     equal(response.status, 204, 'status is correct')
-    equal(response.headers.get('allow'),
+    equal(response.headers['allow'],
       'GET, PATCH, DELETE', 'allow header is correct')
   })
 })
