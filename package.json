@@ -1,7 +1,7 @@
 {
   "name": "fortune-micro-api",
   "description": "Micro API serializer for Fortune.",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "license": "MIT",
   "author": {
     "email": "0x8890@airmail.cc",
@@ -22,14 +22,16 @@
     "test:lint": "eslint lib test"
   },
   "dependencies": {
-    "babel-runtime": "^5.8.20",
-    "inflection": "^1.7.1",
-    "uri-templates": "^0.1.7"
+    "babel-runtime": "^6.0.14",
+    "inflection": "^1.7.2",
+    "uri-templates": "^0.1.9"
   },
   "devDependencies": {
-    "babel": "^5.8.23",
-    "eslint": "^1.3.1",
-    "fortune": "^1.3.4",
+    "babel-cli": "^6.0.15",
+    "babel-plugin-transform-runtime": "^6.0.16",
+    "babel-preset-es2015": "^6.0.15",
+    "eslint": "^1.8.0",
+    "fortune": "^1.4.4",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.4.3"
   },
@@ -42,9 +44,11 @@
   ],
   "main": "dist/lib/index.js",
   "babel": {
-    "nonStandard": false,
-    "optional": [
-      "runtime"
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "transform-runtime"
     ]
   },
   "engines": {
