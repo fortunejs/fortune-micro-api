@@ -1,5 +1,6 @@
+import deepEqual from 'deep-equal'
 import qs from 'querystring'
-import { run, comment, ok, deepEqual, equal } from 'fortune/test/harness'
+import { run, comment, ok } from 'fortune/test/harness'
 import httpTest from 'fortune/test/http'
 import microApi from '../lib'
 
@@ -18,11 +19,11 @@ const test = httpTest.bind(null, {
 run(() => {
   comment('show index')
   return test('/', null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(Object.keys(response.body).length,
-      4, 'number of types correct')
+    ok(Object.keys(response.body).length === 4,
+      'number of types correct')
   })
 })
 
@@ -30,11 +31,11 @@ run(() => {
 run(() => {
   comment('show collection')
   return test('/users', null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(response.body['@graph'].length,
-      3, 'number of records correct')
+    ok(response.body['@graph'].length === 3,
+      'number of records correct')
   })
 })
 
@@ -44,11 +45,10 @@ run(() => {
   return test(`/users/1?${qs.stringify({
     'include': 'spouse,spouse.friends'
   })}`, null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(response.body['@graph'].length,
-      3, 'number of records correct')
+    ok(response.body['@graph'].length === 3, 'number of records correct')
   })
 })
 
@@ -58,13 +58,13 @@ run(() => {
   return test(`/animals/%2Fwtf?${qs.stringify({
     'fields[animal]': 'birthday,type'
   })}`, null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(response.body['@graph'].length,
-      1, 'number of records correct')
-    equal(Object.keys(response.body['@graph'][0]).length,
-      6, 'number of fields correct')
+    ok(response.body['@graph'].length === 1,
+      'number of records correct')
+    ok(Object.keys(response.body['@graph'][0]).length === 6,
+      'number of fields correct')
   })
 })
 
@@ -76,12 +76,12 @@ run(() => {
     'sort': 'birthday,-name',
     'fields[user]': 'name,birthday'
   })}`, null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    deepEqual(
+    ok(deepEqual(
       response.body['@graph'].map(record => record.name),
-      [ 'John Doe', 'Microsoft Bob', 'Jane Doe' ],
+      [ 'John Doe', 'Microsoft Bob', 'Jane Doe' ]),
       'sort order is correct')
   })
 })
@@ -93,12 +93,12 @@ run(() => {
     'match[name]': 'John Doe,Jane Doe',
     'match[birthday]': '1992-12-07'
   })}`, null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    deepEqual(
+    ok(deepEqual(
       response.body['@graph'].map(record => record.name).sort(),
-      [ 'John Doe' ], 'match is correct')
+      [ 'John Doe' ]), 'match is correct')
   })
 })
 
@@ -106,11 +106,11 @@ run(() => {
 run(() => {
   comment('show related records')
   return test('/users/2/ownedPets', null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(response.body['@graph'].length,
-      2, 'number of records correct')
+    ok(response.body['@graph'].length === 2,
+      'number of records correct')
   })
 })
 
@@ -118,7 +118,7 @@ run(() => {
 run(() => {
   comment('find an empty collection')
   return test(encodeURI('/☯s'), null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(Array.isArray(response.body['@graph']) &&
@@ -131,11 +131,12 @@ run(() => {
 run(() => {
   comment('find a single non-existent record')
   return test('/users/4', null, response => {
-    equal(response.status, 404, 'status is correct')
+    ok(response.status === 404, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok('µ:error' in response.body, 'error object exists')
-    equal(response.body['µ:error'].name, 'NotFoundError', 'name is correct')
+    ok(response.body['µ:error'].name === 'NotFoundError',
+      'name is correct')
     ok(response.body['µ:error'].description.length, 'message exists')
   })
 })
@@ -144,7 +145,7 @@ run(() => {
 run(() => {
   comment('find a collection of non-existent related records')
   return test('/users/3/ownedPets', null, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(Array.isArray(response.body['@graph']) &&
@@ -174,15 +175,15 @@ run(() => {
       } ]
     }
   }, response => {
-    equal(response.status, 201, 'status is correct')
+    ok(response.status === 201, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(response.headers['location'], response.body['@graph'][0]
-      ['@id'], 'location header is correct')
+    ok(response.headers['location'] === response.body['@graph'][0]['@id'],
+      'location header is correct')
     ok(response.body['@graph'][0]['@type'], 'type is correct')
-    equal(response.body['@graph'][0].owner['µ:id'], 1, 'link is correct')
-    equal(new Buffer(response.body['@graph'][0].picture, 'base64')
-      .toString(), 'This is a string.', 'buffer is correct')
+    ok(response.body['@graph'][0].owner['µ:id'] === 1, 'link is correct')
+    ok(new Buffer(response.body['@graph'][0].picture, 'base64')
+      .toString() === 'This is a string.', 'buffer is correct')
     ok(Date.now() - new Date(response.body['@graph'][0].birthday)
       .getTime() < 60 * 1000, 'date is close enough')
   }, (change, methods) => {
@@ -204,7 +205,7 @@ run(() => {
       '@graph': [ { '@type': 'User', 'µ:id': 1 } ]
     }
   }, response => {
-    equal(response.status, 409, 'status is correct')
+    ok(response.status === 409, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(response.body['µ:error'], 'error exists')
@@ -218,11 +219,11 @@ run(() => {
     method: 'post',
     headers: { 'Content-Type': mediaType }
   }, response => {
-    equal(response.status, 405, 'status is correct')
+    ok(response.status === 405, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    equal(response.headers['allow'],
-      'GET, PATCH, DELETE', 'allow header is correct')
+    ok(response.headers['allow'] === 'GET, PATCH, DELETE',
+      'allow header is correct')
     ok(response.body['µ:error'], 'error exists')
   })
 })
@@ -231,7 +232,7 @@ run(() => {
 run(() => {
   comment('create record with wrong media type should fail')
   return test('/users', { method: 'post' }, response => {
-    equal(response.status, 415, 'status is correct')
+    ok(response.status === 415, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(response.body['µ:error'], 'error exists')
@@ -259,7 +260,7 @@ run(() => {
       } ]
     }
   }, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(Math.abs(new Date(response.body['@graph'][0].lastModified).getTime() -
@@ -285,7 +286,7 @@ run(() => {
       } ]
     }
   }, response => {
-    equal(response.status, 200, 'status is correct')
+    ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(Math.abs(new Date(response.body['@graph'][0].lastModified).getTime() -
@@ -297,7 +298,7 @@ run(() => {
 run(() => {
   comment('delete a single record')
   return test('/animals/3', { method: 'delete' }, response => {
-    equal(response.status, 204, 'status is correct')
+    ok(response.status === 204, 'status is correct')
   })
 })
 
@@ -305,9 +306,8 @@ run(() => {
 run(() => {
   comment('respond to options: index')
   return test('/', { method: 'options' }, response => {
-    equal(response.status, 204, 'status is correct')
-    equal(response.headers['allow'],
-      'GET', 'allow header is correct')
+    ok(response.status === 204, 'status is correct')
+    ok(response.headers['allow'] === 'GET', 'allow header is correct')
   })
 })
 
@@ -315,9 +315,9 @@ run(() => {
 run(() => {
   comment('respond to options: collection')
   return test('/users', { method: 'options' }, response => {
-    equal(response.status, 204, 'status is correct')
-    equal(response.headers['allow'],
-      'GET, POST, PATCH, DELETE', 'allow header is correct')
+    ok(response.status === 204, 'status is correct')
+    ok(response.headers['allow'] === 'GET, POST, PATCH, DELETE',
+      'allow header is correct')
   })
 })
 
@@ -325,9 +325,9 @@ run(() => {
 run(() => {
   comment('respond to options: IDs')
   return test('/users/3', { method: 'options' }, response => {
-    equal(response.status, 204, 'status is correct')
-    equal(response.headers['allow'],
-      'GET, PATCH, DELETE', 'allow header is correct')
+    ok(response.status === 204, 'status is correct')
+    ok(response.headers['allow'] === 'GET, PATCH, DELETE',
+      'allow header is correct')
   })
 })
 
@@ -335,9 +335,9 @@ run(() => {
 run(() => {
   comment('respond to options: related')
   return test('/users/3/ownedPets', { method: 'options' }, response => {
-    equal(response.status, 204, 'status is correct')
-    equal(response.headers['allow'],
-      'GET, PATCH, DELETE', 'allow header is correct')
+    ok(response.status === 204, 'status is correct')
+    ok(response.headers['allow'] === 'GET, PATCH, DELETE',
+      'allow header is correct')
   })
 })
 
@@ -345,6 +345,6 @@ run(() => {
 run(() => {
   comment('respond to options: fail')
   return test('/foo', { method: 'options' }, response => {
-    equal(response.status, 404, 'status is correct')
+    ok(response.status === 404, 'status is correct')
   })
 })
