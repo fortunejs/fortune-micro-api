@@ -10,6 +10,9 @@ const test = httpTest.bind(null, {
   serializers: [ { type: microApi, options: {
     vocabulary: 'http://example.com/',
     base: 'http://api.example.com/',
+    namespaces: {
+      foo: 'http://bar.com/'
+    },
     obfuscateURIs: false,
     castId: true
   } } ]
@@ -163,7 +166,8 @@ run(() => {
     body: {
       '@context': {
         '@vocab': 'http://example.com/',
-        'µ': 'http://micro-api.org/'
+        'µ': 'http://micro-api.org/',
+        'foo': 'http://bar.com/'
       },
       '@graph': [ {
         '@type': 'Animal',
@@ -200,7 +204,8 @@ run(() => {
     body: {
       '@context': {
         '@vocab': 'http://example.com/',
-        'µ': 'http://micro-api.org/'
+        'µ': 'http://micro-api.org/',
+        'foo': 'http://bar.com/'
       },
       '@graph': [ { '@type': 'User', 'µ:id': 1 } ]
     }
@@ -248,7 +253,8 @@ run(() => {
     body: {
       '@context': {
         '@vocab': 'http://example.com/',
-        'µ': 'http://micro-api.org/'
+        'µ': 'http://micro-api.org/',
+        'foo': 'http://bar.com/'
       },
       '@graph': [ {
         '@type': 'User',
@@ -277,7 +283,8 @@ run(() => {
     body: {
       '@context': {
         '@vocab': 'http://example.com/',
-        'µ': 'http://micro-api.org/'
+        'µ': 'http://micro-api.org/',
+        'foo': 'http://bar.com/'
       },
       '@graph': [ {
         '@type': 'Animal',

@@ -33,8 +33,8 @@ The `options` object is as follows:
 - `includeLimit`: maximum depth of fields per include. Default: `3`.
 - `bufferEncoding`: which encoding type to use for input buffer fields. Default: `base64`.
 - `obfuscateURIs`: obfuscate URIs to encourage use of hypermedia. Default: `true`.
+- `namespaces`: Custom namespaces in the top-level `@context` object, keyed by namespace, valued by URI. Default: `{}`.
 - `vocabulary`: which vocabulary to use. Default `http://schema.org/`.
-- `namespace`: which namespace to use for Micro API vocabulary. Default `µ`.
 - `base`: base IRI with trailing slash. Default `null`.
 
 Internal options:
