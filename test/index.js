@@ -13,6 +13,10 @@ const test = httpTest.bind(null, {
     namespaces: {
       foo: 'http://bar.com/'
     },
+    namespaceMap: {
+      name: 'foo',
+      Animal: 'foo'
+    },
     obfuscateURIs: false,
     castId: true
   } } ]
@@ -83,7 +87,7 @@ run(() => {
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(deepEqual(
-      response.body['@graph'].map(record => record.name),
+      response.body['@graph'].map(record => record['foo:name']),
       [ 'John Doe', 'Microsoft Bob', 'Jane Doe' ]),
       'sort order is correct')
   })
@@ -100,7 +104,7 @@ run(() => {
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     ok(deepEqual(
-      response.body['@graph'].map(record => record.name).sort(),
+      response.body['@graph'].map(record => record['foo:name']).sort(),
       [ 'John Doe' ]), 'match is correct')
   })
 })
@@ -170,8 +174,8 @@ run(() => {
         'foo': 'http://bar.com/'
       },
       '@graph': [ {
-        '@type': 'Animal',
-        name: 'Rover',
+        '@type': 'foo:Animal',
+        'foo:name': 'Rover',
         birthday: new Date().toJSON(),
         picture: new Buffer('This is a string.').toString('base64'),
         nicknames: [ 'Foo', 'Bar' ],
@@ -235,17 +239,6 @@ run(() => {
 
 
 run(() => {
-  comment('create record with wrong media type should fail')
-  return test('/users', { method: 'post' }, response => {
-    ok(response.status === 415, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
-      'content type is correct')
-    ok(response.body['µ:error'], 'error exists')
-  })
-})
-
-
-run(() => {
   comment('update record #1')
   return test('/users/2', {
     method: 'patch',
@@ -259,7 +252,7 @@ run(() => {
       '@graph': [ {
         '@type': 'User',
         'µ:id': 2,
-        name: 'Jenny Death',
+        'foo:name': 'Jenny Death',
         spouse: { 'µ:id': 3 },
         enemies: { 'µ:id': [ 3 ] },
         friends: { 'µ:id': [ 1, 3 ] }
@@ -287,7 +280,7 @@ run(() => {
         'foo': 'http://bar.com/'
       },
       '@graph': [ {
-        '@type': 'Animal',
+        '@type': 'foo:Animal',
         'µ:id': 2,
         nicknames: [ 'Baz', 'Qux' ]
       } ]

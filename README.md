@@ -34,6 +34,7 @@ The `options` object is as follows:
 - `bufferEncoding`: which encoding type to use for input buffer fields. Default: `base64`.
 - `obfuscateURIs`: obfuscate URIs to encourage use of hypermedia. Default: `true`.
 - `namespaces`: Custom namespaces in the top-level `@context` object, keyed by namespace, valued by URI. Default: `{}`.
+- `namespaceMap`: An object keyed by field or type names, valued by namespace. For example, `{ name: 'custom' }` would map the field or type `name` to the namespace `custom`. Default: `{}`.
 - `vocabulary`: which vocabulary to use. Default `http://schema.org/`.
 - `base`: base IRI with trailing slash. Default `null`.
 
