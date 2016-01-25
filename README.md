@@ -14,14 +14,16 @@ $ npm install fortune-micro-api
 ## Usage
 
 ```js
-import fortune from 'fortune'
-import microApi from 'fortune-micro-api'
+const fortune = require('fortune')
+const microApiSerializer = require('fortune-micro-api')
 
-const store = fortune.create({
-  serializers: [ {
-    type: microApi,
-    options: { ... }
-  } ]
+const store = fortune({ ... }, {
+  serializers: [
+    {
+      type: microApiSerializer,
+      options: { ... }
+    }
+  ]
 })
 ```
 
@@ -51,13 +53,14 @@ Internal options:
 This serializer interprets a special field on type definitions: `isReverse`:
 
 ```js
-store.defineType('person', {
-  actedIn: { link: 'movie', inverse: 'actor', isArray: true, isReverse: true }
-})
-
-store.defineType('movie', {
-  actor: { link: 'person', inverse: 'actedIn', isArray: true }
-})
+{
+  person: {
+    actedIn: { link: 'movie', inverse: 'actor', isArray: true, isReverse: true }
+  },
+  movie: {
+    actor: { link: 'person', inverse: 'actedIn', isArray: true }
+  }
+}
 ```
 
 This will tell the serializer to rely on the `@reverse` property.
