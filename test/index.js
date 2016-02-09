@@ -1,8 +1,13 @@
-import deepEqual from 'deep-equal'
-import qs from 'querystring'
-import { run, comment, ok } from 'fortune/test/harness'
-import httpTest from 'fortune/test/http'
-import microApi from '../lib'
+const deepEqual = require('deep-equal')
+const qs = require('querystring')
+
+const tapdance = require('tapdance')
+const run = tapdance.run
+const comment = tapdance.comment
+const ok = tapdance.ok
+
+const httpTest = require('fortune/test/http')
+const microApi = require('../lib')
 
 
 const mediaType = 'application/vnd.micro+json'
