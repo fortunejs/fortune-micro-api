@@ -4,7 +4,7 @@
 [![npm Version](https://img.shields.io/npm/v/fortune-micro-api.svg?style=flat-square)](https://www.npmjs.com/package/fortune)
 [![License](https://img.shields.io/npm/l/fortune-micro-api.svg?style=flat-square)](https://raw.githubusercontent.com/fortunejs/fortune-micro-api/master/LICENSE)
 
-This is a [Micro API](http://micro-api.org) serializer for [Fortune.js](http://fortunejs.com), which is compatible with the specification as of **9 January 2016**. It is tested against Fortune.js version `2.x`.
+This is a [Micro API](http://micro-api.org) serializer for [Fortune.js](http://fortunejs.com), which is compatible with the specification as of **9 January 2016**. It is tested against Fortune.js version `3.x`.
 
 ```sh
 $ npm install fortune-micro-api
@@ -51,9 +51,9 @@ This serializer interprets a special field on type definitions: `isReverse`:
 
 ```js
 {
- person: {
-   actedIn: { link: 'movie', inverse: 'actor', isArray: true, isReverse: true }
- },
+  person: {
+    actedIn: { link: 'movie', inverse: 'actor', isArray: true, isReverse: true }
+  },
   movie: {
     actor: { link: 'person', inverse: 'actedIn', isArray: true }
   }
