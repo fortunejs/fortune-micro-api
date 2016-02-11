@@ -14,8 +14,8 @@ $ npm install fortune-micro-api
 ## Usage
 
 ```js
-const fortune from 'fortune'
-const microApiSerializer from 'fortune-micro-api'
+const fortune = require('fortune')
+const microApiSerializer = require('fortune-micro-api')
 
 fortune.net.http(instance, {
   serializers: [
