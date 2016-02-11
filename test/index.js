@@ -7,24 +7,25 @@ const comment = tapdance.comment
 const ok = tapdance.ok
 
 const httpTest = require('fortune/test/http')
-const microApi = require('../lib')
-
+const microApiSerializer = require('../lib')
 
 const mediaType = 'application/vnd.micro+json'
 const test = httpTest.bind(null, {
-  serializers: [ { type: microApi, options: {
-    vocabulary: 'http://example.com/',
-    base: 'http://api.example.com/',
-    namespaces: {
-      foo: 'http://bar.com/'
-    },
-    namespaceMap: {
-      name: 'foo',
-      Animal: 'foo'
-    },
-    obfuscateURIs: false,
-    castId: true
-  } } ]
+  serializers: [
+    [ microApiSerializer, {
+      vocabulary: 'http://example.com/',
+      base: 'http://api.example.com/',
+      namespaces: {
+        foo: 'http://bar.com/'
+      },
+      namespaceMap: {
+        name: 'foo',
+        Animal: 'foo'
+      },
+      obfuscateURIs: false,
+      castId: true
+    } ]
+  ]
 })
 
 
@@ -236,8 +237,6 @@ run(() => {
     ok(response.status === 405, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(response.headers['allow'] === 'GET, PATCH, DELETE',
-      'allow header is correct')
     ok(response.body['µ:error'], 'error exists')
   })
 })
