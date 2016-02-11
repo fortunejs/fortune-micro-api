@@ -32,7 +32,6 @@
   },
   "files": [
     "lib/",
-    "test/",
     "LICENSE"
   ],
   "main": "lib/index.js",
