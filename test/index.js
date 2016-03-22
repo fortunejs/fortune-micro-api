@@ -22,7 +22,8 @@ const test = httpTest.bind(null, {
         name: 'foo',
         Animal: 'foo'
       },
-      obfuscateURIs: false,
+      inflectPath: true,
+      uriBase64: false,
       castId: true
     } ]
   ]
@@ -232,7 +233,8 @@ run(() => {
   comment('create record on wrong route should fail')
   return test('/users/1', {
     method: 'post',
-    headers: { 'Content-Type': mediaType }
+    headers: { 'Content-Type': mediaType },
+    body: {}
   }, response => {
     ok(response.status === 405, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),

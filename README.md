@@ -26,11 +26,11 @@ fortune.net.http(instance, {
 
 The `options` object is as follows:
 
-- `inflectPath`: pluralize the record type name in the URI. Default: `true`.
+- `inflectPath`: pluralize the record type name in the URI. Default: `false`.
 - `inflectType`: convert record type name to *PascalCase* in the payload. Default: `true`.
 - `maxLimit`: maximum number of records to show per page. Default: `1000`.
 - `includeLimit`: maximum depth of fields per include. Default: `3`.
-- `obfuscateURIs`: obfuscate URIs to encourage use of hypermedia. Default: `true`.
+- `uriBase64`: encode URIs in base64 to discourage clients from tampering with the URI. Default: `false`.
 - `namespaces`: Custom namespaces in the top-level `@context` object, keyed by namespace, valued by URI. Default: `{}`.
 - `namespaceMap`: An object keyed by field or type names, valued by namespace. For example, `{ name: 'custom' }` would map the field or type `name` to the namespace `custom`. Default: `{}`.
 - `vocabulary`: which vocabulary to use. Default `http://schema.org/`.
