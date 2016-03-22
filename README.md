@@ -14,15 +14,24 @@ $ npm install fortune-micro-api
 ## Usage
 
 ```js
+const http = require('http')
 const fortune = require('fortune')
 const microApiSerializer = require('fortune-micro-api')
 
-fortune.net.http(instance, {
+// `instance` is an instance of Fortune.js.
+const listener = fortune.net.http(instance, {
   serializers: [
+    // The `options` object here is optional.
     [ microApiSerializer, options ]
   ]
 })
+// The listener function may be used as a standalone server, or
+// may be composed as part of a framework.
+const server = http.createServer(listener)
+
+server.listen(8080)
 ```
+
 
 The `options` object is as follows:
 
