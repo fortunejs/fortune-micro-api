@@ -4,7 +4,7 @@
 [![npm Version](https://img.shields.io/npm/v/fortune-micro-api.svg?style=flat-square)](https://www.npmjs.com/package/fortune)
 [![License](https://img.shields.io/npm/l/fortune-micro-api.svg?style=flat-square)](https://raw.githubusercontent.com/fortunejs/fortune-micro-api/master/LICENSE)
 
-This is a [Micro API](http://micro-api.org) serializer for [Fortune.js](http://fortunejs.com), which is compatible with the specification as of **9 January 2016**. It is tested against Fortune.js version `3.x`.
+This is a [Micro API](http://micro-api.org) serializer for [Fortune.js](http://fortunejs.com), which is compatible with the specification as of **9 January 2016**. It is tested against Fortune.js version `3.4+`.
 
 ```sh
 $ npm install fortune-micro-api
@@ -35,23 +35,19 @@ server.listen(8080)
 
 The `options` object is as follows:
 
-- `inflectPath`: pluralize the record type name in the URI. Default: `false`.
 - `inflectType`: convert record type name to *PascalCase* in the payload. Default: `true`.
-- `maxLimit`: maximum number of records to show per page. Default: `1000`.
-- `includeLimit`: maximum depth of fields per include. Default: `3`.
-- `uriBase64`: encode URIs in base64 to discourage clients from tampering with the URI. Default: `false`.
 - `namespaces`: Custom namespaces in the top-level `@context` object, keyed by namespace, valued by URI. Default: `{}`.
 - `namespaceMap`: An object keyed by field or type names, valued by namespace. For example, `{ name: 'custom' }` would map the field or type `name` to the namespace `custom`. Default: `{}`.
 - `vocabulary`: which vocabulary to use. Default `http://schema.org/`.
 - `base`: base IRI with trailing slash. Default `null`.
+
+**Inherited options**:
+
 - `bufferEncoding`: which encoding type to use for input buffer fields. Default: `base64`.
-- `jsonSpaces`: how many spaces to use for pretty printing JSON. Default: `2`.
-
-Internal options:
-
-- `castId`: try to cast string IDs to numbers if possible. Default: `false`.
-- `uriTemplate`: URI template string.
-- `allowLevel`: HTTP methods to allow ordered by appearance in URI template.
+- `maxLimit`: maximum number of records to show per page.
+- `includeLimit`: maximum depth of fields per include.
+- `uriBase64`: encode URIs in base64 to discourage clients from tampering with the URI.
+- `castId`: try to cast string IDs to numbers if possible.
 
 
 ## Extension

@@ -1,7 +1,7 @@
 {
   "name": "fortune-micro-api",
   "description": "Micro API serializer for Fortune.",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "license": "MIT",
   "author": {
     "email": "0x8890@airmail.cc",
@@ -19,15 +19,14 @@
     "lint": "eslint lib test"
   },
   "dependencies": {
-    "inflection": "^1.8.0",
-    "uri-templates": "^0.1.9"
+    "inflection": "^1.8.0"
   },
   "devDependencies": {
     "chalk": "^1.1.1",
     "deep-equal": "^1.0.1",
-    "eslint": "^2.4.0",
+    "eslint": "^2.5.1",
     "eslint-config-0x8890": "^1.0.2",
-    "fortune": "^3.3.3",
+    "fortune": "^3.4.2",
     "tapdance": "^4.1.1"
   },
   "files": [

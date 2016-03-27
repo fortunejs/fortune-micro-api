@@ -44,7 +44,7 @@ run(() => {
 
 run(() => {
   comment('show collection')
-  return test('/users', null, response => {
+  return test('/user', null, response => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
@@ -56,8 +56,8 @@ run(() => {
 
 run(() => {
   comment('show individual record with include')
-  return test(`/users/1?${qs.stringify({
-    'include': 'spouse,spouse.friends'
+  return test(`/user/1?${qs.stringify({
+    'include': [ 'spouse', 'spouse.friends' ]
   })}`, null, response => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
@@ -69,8 +69,8 @@ run(() => {
 
 run(() => {
   comment('show individual record with encoded ID')
-  return test(`/animals/%2Fwtf?${qs.stringify({
-    'fields[animal]': 'birthday,type'
+  return test(`/animal/%2Fwtf?${qs.stringify({
+    'fields': [ 'birthday', 'type' ]
   })}`, null, response => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
@@ -86,9 +86,9 @@ run(() => {
 run(() => {
   comment('sort a collection and use sparse fields')
   return test(
-  `/users?${qs.stringify({
-    'sort': 'birthday,-name',
-    'fields[user]': 'name,birthday'
+  `/user?${qs.stringify({
+    'sort': [ 'birthday', '-name' ],
+    'fields': [ 'name', 'birthday' ]
   })}`, null, response => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
@@ -103,9 +103,9 @@ run(() => {
 
 run(() => {
   comment('match on a collection')
-  return test(`/users?${qs.stringify({
-    'match[name]': 'John Doe,Jane Doe',
-    'match[birthday]': '1992-12-07'
+  return test(`/user?${qs.stringify({
+    'match.name': [ 'John Doe', 'Jane Doe' ],
+    'match.birthday': '1992-12-07'
   })}`, null, response => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
@@ -119,7 +119,7 @@ run(() => {
 
 run(() => {
   comment('show related records')
-  return test('/users/2/ownedPets', null, response => {
+  return test('/user/2/ownedPets', null, response => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
@@ -131,7 +131,7 @@ run(() => {
 
 run(() => {
   comment('find an empty collection')
-  return test(encodeURI('/☯s'), null, response => {
+  return test(encodeURI('/☯'), null, response => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
@@ -144,7 +144,7 @@ run(() => {
 
 run(() => {
   comment('find a single non-existent record')
-  return test('/users/4', null, response => {
+  return test('/user/4', null, response => {
     ok(response.status === 404, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
@@ -158,7 +158,7 @@ run(() => {
 
 run(() => {
   comment('find a collection of non-existent related records')
-  return test('/users/3/ownedPets', null, response => {
+  return test('/user/3/ownedPets', null, response => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
@@ -171,7 +171,7 @@ run(() => {
 
 run(() => {
   comment('create record')
-  return test('/animals', {
+  return test('/animal', {
     method: 'post',
     headers: { 'Content-Type': mediaType },
     body: {
@@ -209,7 +209,7 @@ run(() => {
 
 run(() => {
   comment('create record with existing ID should fail')
-  return test('/users', {
+  return test('/user', {
     method: 'post',
     headers: { 'Content-Type': mediaType },
     body: {
@@ -231,7 +231,7 @@ run(() => {
 
 run(() => {
   comment('create record on wrong route should fail')
-  return test('/users/1', {
+  return test('/user/1', {
     method: 'post',
     headers: { 'Content-Type': mediaType },
     body: {}
@@ -246,7 +246,7 @@ run(() => {
 
 run(() => {
   comment('update record #1')
-  return test('/users/2', {
+  return test('/user/2', {
     method: 'patch',
     headers: { 'Content-Type': mediaType },
     body: {
@@ -276,7 +276,7 @@ run(() => {
 
 run(() => {
   comment('update record #2')
-  return test('/animals/2', {
+  return test('/animal/2', {
     method: 'patch',
     headers: { 'Content-Type': mediaType },
     body: {
@@ -303,7 +303,7 @@ run(() => {
 
 run(() => {
   comment('delete a single record')
-  return test('/animals/3', { method: 'delete' }, response => {
+  return test('/animal/3', { method: 'delete' }, response => {
     ok(response.status === 204, 'status is correct')
   })
 })
@@ -320,7 +320,7 @@ run(() => {
 
 run(() => {
   comment('respond to options: collection')
-  return test('/users', { method: 'options' }, response => {
+  return test('/user', { method: 'options' }, response => {
     ok(response.status === 204, 'status is correct')
     ok(response.headers['allow'] === 'GET, POST, PATCH, DELETE',
       'allow header is correct')
@@ -330,7 +330,7 @@ run(() => {
 
 run(() => {
   comment('respond to options: IDs')
-  return test('/users/3', { method: 'options' }, response => {
+  return test('/user/3', { method: 'options' }, response => {
     ok(response.status === 204, 'status is correct')
     ok(response.headers['allow'] === 'GET, PATCH, DELETE',
       'allow header is correct')
@@ -340,7 +340,7 @@ run(() => {
 
 run(() => {
   comment('respond to options: related')
-  return test('/users/3/ownedPets', { method: 'options' }, response => {
+  return test('/user/3/ownedPets', { method: 'options' }, response => {
     ok(response.status === 204, 'status is correct')
     ok(response.headers['allow'] === 'GET, PATCH, DELETE',
       'allow header is correct')
