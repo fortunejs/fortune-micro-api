@@ -43,7 +43,7 @@ The `options` object is as follows:
 
 **Inherited options**:
 
-- `bufferEncoding`: which encoding type to use for input buffer fields. Default: `base64`.
+- `bufferEncoding`: which encoding type to use for input buffer fields.
 - `maxLimit`: maximum number of records to show per page.
 - `includeLimit`: maximum depth of fields per include.
 - `uriBase64`: encode URIs in base64 to discourage clients from tampering with the URI.

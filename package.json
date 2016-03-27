@@ -1,7 +1,7 @@
 {
   "name": "fortune-micro-api",
   "description": "Micro API serializer for Fortune.",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "author": {
     "email": "0x8890@airmail.cc",
@@ -18,9 +18,7 @@
     "test": "npm run lint && node test",
     "lint": "eslint lib test"
   },
-  "dependencies": {
-    "inflection": "^1.8.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chalk": "^1.1.1",
     "deep-equal": "^1.0.1",
