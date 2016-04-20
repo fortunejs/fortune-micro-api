@@ -268,7 +268,7 @@ run(() => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(Math.abs(new Date(response.body['@graph'][0].lastModified).getTime() -
+    ok(Math.abs(new Date(response.body['@graph'][0].lastModifiedAt).getTime() -
       Date.now()) < 5 * 1000, 'update modifier is correct')
   })
 })
@@ -295,7 +295,7 @@ run(() => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(Math.abs(new Date(response.body['@graph'][0].lastModified).getTime() -
+    ok(Math.abs(new Date(response.body['@graph'][0].lastModifiedAt).getTime() -
       Date.now()) < 5 * 1000, 'update modifier is correct')
   })
 })
