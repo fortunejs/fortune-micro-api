@@ -77,7 +77,7 @@ run(() => {
       'content type is correct')
     ok(response.body['@graph'].length === 1,
       'number of records correct')
-    ok(Object.keys(response.body['@graph'][0]).length === 6,
+    ok(Object.keys(response.body['@graph'][0]).length === 7,
       'number of fields correct')
   })
 })
