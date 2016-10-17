@@ -4,7 +4,7 @@
 [![npm Version](https://img.shields.io/npm/v/fortune-micro-api.svg?style=flat-square)](https://www.npmjs.com/package/fortune-micro-api)
 [![License](https://img.shields.io/npm/l/fortune-micro-api.svg?style=flat-square)](https://raw.githubusercontent.com/fortunejs/fortune-micro-api/master/LICENSE)
 
-This is a [Micro API](http://micro-api.org) serializer for [Fortune.js](http://fortunejs.com), which is compatible with the specification as of **9 January 2016**. It is tested against Fortune.js version `4.x`.
+This is a [Micro API](http://micro-api.org) serializer for [Fortune.js](http://fortunejs.com), which is compatible with the specification as of **2016-09-06**. It is tested against Fortune.js version `4.x`.
 
 ```sh
 $ npm install fortune-micro-api
@@ -25,6 +25,7 @@ const listener = fortune.net.http(instance, {
     [ microApiSerializer, options ]
   ]
 })
+
 // The listener function may be used as a standalone server, or
 // may be composed as part of a framework.
 const server = http.createServer(listener)
@@ -38,8 +39,8 @@ The `options` object is as follows:
 - `inflectType`: convert record type name to *PascalCase* in the payload. Default: `true`.
 - `namespaces`: Custom namespaces in the top-level `@context` object, keyed by namespace, valued by URI. Default: `{}`.
 - `namespaceMap`: An object keyed by field or type names, valued by namespace. For example, `{ name: 'custom' }` would map the field or type `name` to the namespace `custom`. Default: `{}`.
-- `vocabulary`: which vocabulary to use. Default `http://schema.org/`.
-- `base`: base IRI with trailing slash. Default `null`.
+- `base`: base URI with trailing slash. Default `null`.
+- `entryPoint`: URI to the entry point. Default `/`.
 
 **Inherited options**:
 
@@ -66,6 +67,18 @@ This serializer interprets a special field on type definitions: `isReverse`:
 ```
 
 This will tell the serializer to rely on the `@reverse` property.
+
+
+## MessagePack
+
+Instead of using JSON as a serialization format, it can optionally use [MessagePack](http://msgpack.org) instead, with an unregistered media type `application/x-micro-api`.
+
+```js
+const microApiSerializer = require('fortune-micro-api')
+
+// Alternative serializer with unregistered media type.
+const microApiMsgPack = microApiSerializer.msgpack
+```
 
 
 ## License

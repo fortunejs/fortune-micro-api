@@ -8,25 +8,46 @@ const ok = tapdance.ok
 
 const httpTest = require('fortune/test/http')
 const microApiSerializer = require('../lib')
+const settings = require('../lib/settings')
 
-const mediaType = 'application/vnd.micro+json'
+const mediaType = settings.mediaType
+const unregisteredMediaType = settings.unregisteredMediaType
+
+const options = {
+  entryPoint: 'http://example.com/',
+  base: 'http://api.example.com/',
+  namespaces: {
+    foo: 'http://bar.com/'
+  },
+  namespaceMap: {
+    name: 'foo',
+    Animal: 'foo'
+  },
+  inflectPath: true,
+  uriBase64: false,
+  castId: true
+}
+
 const test = httpTest.bind(null, {
   serializers: [
-    [ microApiSerializer, {
-      vocabulary: 'http://example.com/',
-      base: 'http://api.example.com/',
-      namespaces: {
-        foo: 'http://bar.com/'
-      },
-      namespaceMap: {
-        name: 'foo',
-        Animal: 'foo'
-      },
-      inflectPath: true,
-      uriBase64: false,
-      castId: true
-    } ]
+    [ microApiSerializer, options ],
+    [ microApiSerializer.msgpack, options ]
   ]
+})
+
+
+run(() => {
+  comment('use msgpack')
+  return test('/', {
+    headers: {
+      'Accept': unregisteredMediaType,
+      'Accept-Encoding': '*'
+    }
+  }, response => {
+    ok(response.status === 200, 'status is correct')
+    ok(response.headers['content-type'] === unregisteredMediaType,
+      'content type is correct')
+  })
 })
 
 
@@ -36,7 +57,7 @@ run(() => {
     ok(response.status === 200, 'status is correct')
     ok(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(Object.keys(response.body).length === 4,
+    ok(Object.keys(response.body).length === 5,
       'number of types correct')
   })
 })
@@ -176,7 +197,7 @@ run(() => {
     headers: { 'Content-Type': mediaType },
     body: {
       '@context': {
-        '@vocab': 'http://example.com/',
+        '@vocab': 'http://example.com/#',
         'µ': 'http://micro-api.org/',
         'foo': 'http://bar.com/'
       },
@@ -214,7 +235,7 @@ run(() => {
     headers: { 'Content-Type': mediaType },
     body: {
       '@context': {
-        '@vocab': 'http://example.com/',
+        '@vocab': 'http://example.com/#',
         'µ': 'http://micro-api.org/',
         'foo': 'http://bar.com/'
       },
@@ -251,7 +272,7 @@ run(() => {
     headers: { 'Content-Type': mediaType },
     body: {
       '@context': {
-        '@vocab': 'http://example.com/',
+        '@vocab': 'http://example.com/#',
         'µ': 'http://micro-api.org/',
         'foo': 'http://bar.com/'
       },
@@ -281,7 +302,7 @@ run(() => {
     headers: { 'Content-Type': mediaType },
     body: {
       '@context': {
-        '@vocab': 'http://example.com/',
+        '@vocab': 'http://example.com/#',
         'µ': 'http://micro-api.org/',
         'foo': 'http://bar.com/'
       },
