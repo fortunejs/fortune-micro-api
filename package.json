@@ -3,10 +3,6 @@
   "description": "Micro API serializer for Fortune.",
   "version": "2.2.0",
   "license": "MIT",
-  "author": {
-    "email": "0x8890@airmail.cc",
-    "url": "http://0x8890.com"
-  },
   "repository": {
     "type": "git",
     "url": "git@github.com:fortunejs/fortune-micro-api.git"
