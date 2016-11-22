@@ -1,12 +1,9 @@
 const deepEqual = require('deep-equal')
 const qs = require('querystring')
 
-const tapdance = require('tapdance')
-const run = tapdance.run
-const comment = tapdance.comment
-const ok = tapdance.ok
+const run = require('tapdance')
 
-const httpTest = require('fortune/test/http')
+const httpTest = require('fortune-http/test/http_test')
 const microApiSerializer = require('../lib')
 const settings = require('../lib/settings')
 
@@ -36,7 +33,7 @@ const test = httpTest.bind(null, {
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('use msgpack')
   return test('/', {
     headers: {
@@ -44,77 +41,77 @@ run(() => {
       'Accept-Encoding': '*'
     }
   }, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(response.headers['content-type'] === unregisteredMediaType,
+    assert(response.status === 200, 'status is correct')
+    assert(response.headers['content-type'] === unregisteredMediaType,
       'content type is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('show index')
   return test('/', null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(Object.keys(response.body).length === 5,
+    assert(Object.keys(response.body).length === 5,
       'number of types correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('show collection')
   return test('/user', null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(response.body['@graph'].length === 3,
+    assert(response.body['@graph'].length === 3,
       'number of records correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('show individual record with include')
   return test(`/user/1?${qs.stringify({
     'include': [ 'spouse', 'spouse.friends' ]
   })}`, null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(response.body['@graph'].length === 3, 'number of records correct')
+    assert(response.body['@graph'].length === 3, 'number of records correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('show individual record with encoded ID')
   return test(`/animal/%2Fwtf?${qs.stringify({
     'fields': [ 'birthday', 'type' ]
   })}`, null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(response.body['@graph'].length === 1,
+    assert(response.body['@graph'].length === 1,
       'number of records correct')
-    ok(Object.keys(response.body['@graph'][0]).length === 7,
+    assert(Object.keys(response.body['@graph'][0]).length === 7,
       'number of fields correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('sort a collection and use sparse fields')
   return test(
   `/user?${qs.stringify({
     'sort': [ 'birthday', '-name' ],
     'fields': [ 'name', 'birthday' ]
   })}`, null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(deepEqual(
+    assert(deepEqual(
       response.body['@graph'].map(record => record['foo:name']),
       [ 'John Doe', 'Microsoft Bob', 'Jane Doe' ]),
       'sort order is correct')
@@ -122,75 +119,75 @@ run(() => {
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('match on a collection')
   return test(`/user?${qs.stringify({
     'match.name': [ 'John Doe', 'Jane Doe' ],
     'match.birthday': '1992-12-07'
   })}`, null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(deepEqual(
+    assert(deepEqual(
       response.body['@graph'].map(record => record['foo:name']).sort(),
       [ 'John Doe' ]), 'match is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('show related records')
   return test('/user/2/ownedPets', null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(response.body['@graph'].length === 2,
+    assert(response.body['@graph'].length === 2,
       'number of records correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('find an empty collection')
   return test(encodeURI('/☯'), null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(Array.isArray(response.body['@graph']) &&
+    assert(Array.isArray(response.body['@graph']) &&
       !response.body['@graph'].length,
       'payload is empty array')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('find a single non-existent record')
   return test('/user/4', null, response => {
-    ok(response.status === 404, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 404, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok('µ:error' in response.body, 'error object exists')
-    ok(response.body['µ:error'].name === 'NotFoundError',
+    assert('µ:error' in response.body, 'error object exists')
+    assert(response.body['µ:error'].name === 'NotFoundError',
       'name is correct')
-    ok(response.body['µ:error'].description.length, 'message exists')
+    assert(response.body['µ:error'].description.length, 'message exists')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('find a collection of non-existent related records')
   return test('/user/3/ownedPets', null, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(Array.isArray(response.body['@graph']) &&
+    assert(Array.isArray(response.body['@graph']) &&
       !response.body['@graph'].length,
       'payload is empty array')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('create record')
   return test('/animal', {
     method: 'post',
@@ -211,24 +208,24 @@ run(() => {
       } ]
     }
   }, response => {
-    ok(response.status === 201, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 201, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(response.headers['location'] === response.body['@graph'][0]['@id'],
+    assert(response.headers['location'] === response.body['@graph'][0]['@id'],
       'location header is correct')
-    ok(response.body['@graph'][0]['@type'], 'type is correct')
-    ok(response.body['@graph'][0].owner['µ:id'] === 1, 'link is correct')
-    ok(new Buffer(response.body['@graph'][0].picture, 'base64')
+    assert(response.body['@graph'][0]['@type'], 'type is correct')
+    assert(response.body['@graph'][0].owner['µ:id'] === 1, 'link is correct')
+    assert(new Buffer(response.body['@graph'][0].picture, 'base64')
       .toString() === 'This is a string.', 'buffer is correct')
-    ok(Date.now() - new Date(response.body['@graph'][0].birthday)
+    assert(Date.now() - new Date(response.body['@graph'][0].birthday)
       .getTime() < 60 * 1000, 'date is close enough')
   }, (change, methods) => {
-    ok(change[methods.create].animal[0], 'created ID exists')
+    assert(change[methods.create].animal[0], 'created ID exists')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('create record with existing ID should fail')
   return test('/user', {
     method: 'post',
@@ -242,30 +239,30 @@ run(() => {
       '@graph': [ { '@type': 'User', 'µ:id': 1 } ]
     }
   }, response => {
-    ok(response.status === 409, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 409, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(response.body['µ:error'], 'error exists')
+    assert(response.body['µ:error'], 'error exists')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('create record on wrong route should fail')
   return test('/user/1', {
     method: 'post',
     headers: { 'Content-Type': mediaType },
     body: {}
   }, response => {
-    ok(response.status === 405, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 405, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(response.body['µ:error'], 'error exists')
+    assert(response.body['µ:error'], 'error exists')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('update record #1')
   return test('/user/2', {
     method: 'patch',
@@ -286,16 +283,16 @@ run(() => {
       } ]
     }
   }, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(Math.abs(new Date(response.body['@graph'][0].lastModifiedAt).getTime() -
-      Date.now()) < 5 * 1000, 'update modifier is correct')
+    assert(Math.abs(new Date(response.body['@graph'][0].lastModifiedAt)
+      .getTime() - Date.now()) < 5 * 1000, 'update modifier is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('update record #2')
   return test('/animal/2', {
     method: 'patch',
@@ -313,65 +310,65 @@ run(() => {
       } ]
     }
   }, response => {
-    ok(response.status === 200, 'status is correct')
-    ok(~response.headers['content-type'].indexOf(mediaType),
+    assert(response.status === 200, 'status is correct')
+    assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    ok(Math.abs(new Date(response.body['@graph'][0].lastModifiedAt).getTime() -
-      Date.now()) < 5 * 1000, 'update modifier is correct')
+    assert(Math.abs(new Date(response.body['@graph'][0].lastModifiedAt)
+      .getTime() - Date.now()) < 5 * 1000, 'update modifier is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('delete a single record')
   return test('/animal/3', { method: 'delete' }, response => {
-    ok(response.status === 204, 'status is correct')
+    assert(response.status === 204, 'status is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('respond to options: index')
   return test('/', { method: 'options' }, response => {
-    ok(response.status === 204, 'status is correct')
-    ok(response.headers['allow'] === 'GET', 'allow header is correct')
+    assert(response.status === 204, 'status is correct')
+    assert(response.headers['allow'] === 'GET', 'allow header is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('respond to options: collection')
   return test('/user', { method: 'options' }, response => {
-    ok(response.status === 204, 'status is correct')
-    ok(response.headers['allow'] === 'GET, POST, PATCH, DELETE',
+    assert(response.status === 204, 'status is correct')
+    assert(response.headers['allow'] === 'GET, POST, PATCH, DELETE',
       'allow header is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('respond to options: IDs')
   return test('/user/3', { method: 'options' }, response => {
-    ok(response.status === 204, 'status is correct')
-    ok(response.headers['allow'] === 'GET, PATCH, DELETE',
+    assert(response.status === 204, 'status is correct')
+    assert(response.headers['allow'] === 'GET, PATCH, DELETE',
       'allow header is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('respond to options: related')
   return test('/user/3/ownedPets', { method: 'options' }, response => {
-    ok(response.status === 204, 'status is correct')
-    ok(response.headers['allow'] === 'GET, PATCH, DELETE',
+    assert(response.status === 204, 'status is correct')
+    assert(response.headers['allow'] === 'GET, PATCH, DELETE',
       'allow header is correct')
   })
 })
 
 
-run(() => {
+run((assert, comment) => {
   comment('respond to options: fail')
   return test('/foo', { method: 'options' }, response => {
-    ok(response.status === 404, 'status is correct')
+    assert(response.status === 404, 'status is correct')
   })
 })
