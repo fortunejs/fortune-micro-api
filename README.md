@@ -74,7 +74,7 @@ This will tell the serializer to rely on the `@reverse` property.
 
 ## MessagePack
 
-Instead of using JSON as a serialization format, it can optionally use [MessagePack](http://msgpack.org) instead, with an unregistered media type `application/x-micro-api`.
+Instead of using JSON as a serialization format, it can optionally use [MessagePack](http://msgpack.org) instead, with an unregistered media type `application/x-micro-api`. It has the advantage of serializing dates and buffers properly.
 
 ```js
 const microApiSerializer = require('fortune-micro-api')
