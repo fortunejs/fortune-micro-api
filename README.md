@@ -7,7 +7,7 @@
 This is a [Micro API](http://micro-api.org) serializer for [Fortune.js](http://fortunejs.com), which is compatible with the specification as of **2016-09-06**.
 
 ```sh
-$ npm install fortune-micro-api
+$ npm install fortune fortune-http fortune-micro-api
 ```
 
 
