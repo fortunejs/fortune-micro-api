@@ -1,4 +1,4 @@
-const deepEqual = require('deep-equal')
+const deepEqual = require('fortune/lib/common/deep_equal')
 const qs = require('querystring')
 
 const run = require('tapdance')
@@ -12,16 +12,6 @@ const unregisteredMediaType = settings.unregisteredMediaType
 
 const options = {
   entryPoint: 'http://example.com/',
-  base: 'http://api.example.com/',
-  namespaces: {
-    foo: 'http://bar.com/'
-  },
-  namespaceMap: {
-    name: 'foo',
-    Animal: 'foo'
-  },
-  inflectPath: true,
-  uriBase64: false,
   castId: true
 }
 
@@ -54,7 +44,7 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(Object.keys(response.body).length === 5,
+    assert(Object.keys(response.body).length === 6,
       'number of types correct')
   })
 })
@@ -66,7 +56,7 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(response.body['@graph'].length === 3,
+    assert(response.body.graph.length === 3,
       'number of records correct')
   })
 })
@@ -80,7 +70,7 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(response.body['@graph'].length === 3, 'number of records correct')
+    assert(response.body.graph.length === 3, 'number of records correct')
   })
 })
 
@@ -93,9 +83,8 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(response.body['@graph'].length === 1,
-      'number of records correct')
-    assert(Object.keys(response.body['@graph'][0]).length === 7,
+    assert(!('graph' in response.body), 'single record')
+    assert(Object.keys(response.body).length === 7,
       'number of fields correct')
   })
 })
@@ -112,7 +101,7 @@ run((assert, comment) => {
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     assert(deepEqual(
-      response.body['@graph'].map(record => record['foo:name']),
+      response.body.graph.map(record => record.name),
       [ 'John Doe', 'Microsoft Bob', 'Jane Doe' ]),
       'sort order is correct')
   })
@@ -129,7 +118,7 @@ run((assert, comment) => {
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     assert(deepEqual(
-      response.body['@graph'].map(record => record['foo:name']).sort(),
+      response.body.graph.map(record => record.name).sort(),
       [ 'John Doe' ]), 'match is correct')
   })
 })
@@ -141,7 +130,7 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(response.body['@graph'].length === 2,
+    assert(response.body.graph.length === 2,
       'number of records correct')
   })
 })
@@ -153,8 +142,8 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(Array.isArray(response.body['@graph']) &&
-      !response.body['@graph'].length,
+    assert(Array.isArray(response.body.graph) &&
+      !response.body.graph.length,
       'payload is empty array')
   })
 })
@@ -166,10 +155,10 @@ run((assert, comment) => {
     assert(response.status === 404, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert('µ:error' in response.body, 'error object exists')
-    assert(response.body['µ:error'].name === 'NotFoundError',
+    assert('error' in response.body, 'error object exists')
+    assert(response.body.error.label === 'NotFoundError',
       'name is correct')
-    assert(response.body['µ:error'].description.length, 'message exists')
+    assert(response.body.error.comment.length, 'message exists')
   })
 })
 
@@ -180,8 +169,8 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(Array.isArray(response.body['@graph']) &&
-      !response.body['@graph'].length,
+    assert(Array.isArray(response.body.graph) &&
+      !response.body.graph.length,
       'payload is empty array')
   })
 })
@@ -193,31 +182,23 @@ run((assert, comment) => {
     method: 'post',
     headers: { 'Content-Type': mediaType },
     body: {
-      '@context': {
-        '@vocab': 'http://example.com/#',
-        'µ': 'http://micro-api.org/',
-        'foo': 'http://bar.com/'
-      },
-      '@graph': [ {
-        '@type': 'foo:Animal',
-        'foo:name': 'Rover',
-        birthday: new Date().toJSON(),
-        picture: new Buffer('This is a string.').toString('base64'),
-        nicknames: [ 'Foo', 'Bar' ],
-        owner: { 'µ:id': 1 }
-      } ]
+      name: 'Rover',
+      birthday: new Date().toJSON(),
+      picture: new Buffer('This is a string.').toString('base64'),
+      nicknames: [ 'Foo', 'Bar' ],
+      owner: { 'id': 1 }
     }
   }, response => {
     assert(response.status === 201, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(response.headers['location'] === response.body['@graph'][0]['@id'],
+    assert(response.headers['location'] === response.body.href,
       'location header is correct')
-    assert(response.body['@graph'][0]['@type'], 'type is correct')
-    assert(response.body['@graph'][0].owner['µ:id'] === 1, 'link is correct')
-    assert(new Buffer(response.body['@graph'][0].picture, 'base64')
+    assert(response.body.type === 'Animal', 'type is correct')
+    assert(response.body.owner.id === 1, 'link is correct')
+    assert(new Buffer(response.body.picture, 'base64')
       .toString() === 'This is a string.', 'buffer is correct')
-    assert(Date.now() - new Date(response.body['@graph'][0].birthday)
+    assert(Date.now() - new Date(response.body.birthday)
       .getTime() < 60 * 1000, 'date is close enough')
   }, (change, methods) => {
     assert(change[methods.create].animal[0], 'created ID exists')
@@ -231,18 +212,13 @@ run((assert, comment) => {
     method: 'post',
     headers: { 'Content-Type': mediaType },
     body: {
-      '@context': {
-        '@vocab': 'http://example.com/#',
-        'µ': 'http://micro-api.org/',
-        'foo': 'http://bar.com/'
-      },
-      '@graph': [ { '@type': 'User', 'µ:id': 1 } ]
+      id: 1
     }
   }, response => {
     assert(response.status === 409, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(response.body['µ:error'], 'error exists')
+    assert(response.body['error'], 'error exists')
   })
 })
 
@@ -257,7 +233,7 @@ run((assert, comment) => {
     assert(response.status === 405, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(response.body['µ:error'], 'error exists')
+    assert(response.body.error, 'error exists')
   })
 })
 
@@ -268,25 +244,17 @@ run((assert, comment) => {
     method: 'patch',
     headers: { 'Content-Type': mediaType },
     body: {
-      '@context': {
-        '@vocab': 'http://example.com/#',
-        'µ': 'http://micro-api.org/',
-        'foo': 'http://bar.com/'
-      },
-      '@graph': [ {
-        '@type': 'User',
-        'µ:id': 2,
-        'foo:name': 'Jenny Death',
-        spouse: { 'µ:id': 3 },
-        enemies: { 'µ:id': [ 3 ] },
-        friends: { 'µ:id': [ 1, 3 ] }
-      } ]
+      id: 2,
+      name: 'Jenny Death',
+      spouse: { id: 3 },
+      enemies: { id: [ 3 ] },
+      friends: { id: [ 1, 3 ] }
     }
   }, response => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(Math.abs(new Date(response.body['@graph'][0].lastModifiedAt)
+    assert(Math.abs(new Date(response.body.lastModifiedAt)
       .getTime() - Date.now()) < 5 * 1000, 'update modifier is correct')
   })
 })
@@ -298,22 +266,14 @@ run((assert, comment) => {
     method: 'patch',
     headers: { 'Content-Type': mediaType },
     body: {
-      '@context': {
-        '@vocab': 'http://example.com/#',
-        'µ': 'http://micro-api.org/',
-        'foo': 'http://bar.com/'
-      },
-      '@graph': [ {
-        '@type': 'foo:Animal',
-        'µ:id': 2,
-        nicknames: [ 'Baz', 'Qux' ]
-      } ]
+      id: 2,
+      nicknames: [ 'Baz', 'Qux' ]
     }
   }, response => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(Math.abs(new Date(response.body['@graph'][0].lastModifiedAt)
+    assert(Math.abs(new Date(response.body.lastModifiedAt)
       .getTime() - Date.now()) < 5 * 1000, 'update modifier is correct')
   })
 })
