@@ -34,13 +34,12 @@ const listener = fortuneHTTP(instance, {
 
 // The listener function may be used as a standalone server, or
 // may be composed as part of a framework.
-const server = http.createServer((request, response) => {
+const server = http.createServer((request, response) =>
   // When an external context is set, it should be handled externally.
-  if (request.url.indexOf(options.externalContext) === 0)
-    return microApiSerializer.showExternalContext(response, options)
-
-  listener(request, response).catch(error => { /* error logging */ })
-})
+  (request.url.indexOf(options.externalContext) === 0 ?
+    microApiSerializer.showExternalContext(response, options) :
+    listener(request, response))
+  .catch(error => { /* error logging */ }))
 
 server.listen(8080)
 ```
