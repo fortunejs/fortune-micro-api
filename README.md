@@ -19,19 +19,28 @@ const fortune = require('fortune')
 const fortuneHTTP = require('fortune-http')
 const microApiSerializer = require('fortune-micro-api')
 
+const options = {
+  entryPoint: 'http://example.com',
+  externalContext: '/context.jsonld'
+}
+
 // `instance` is an instance of Fortune.js.
 const listener = fortuneHTTP(instance, {
   serializers: [
-    // The `options` object here is optional.
+    // The `options` object here is required.
     [ microApiSerializer, options ]
   ]
 })
 
 // The listener function may be used as a standalone server, or
 // may be composed as part of a framework.
-const server = http.createServer((request, response) =>
-  listener(request, response)
-  .catch(error => { /* error logging */ }))
+const server = http.createServer((request, response) => {
+  // When an external context is set, it should be handled externally.
+  if (request.url.indexOf(options.externalContext) === 0)
+    return microApiSerializer.showExternalContext(response, options)
+
+  listener(request, response).catch(error => { /* error logging */ })
+})
 
 server.listen(8080)
 ```
@@ -40,6 +49,7 @@ server.listen(8080)
 The `options` object is as follows:
 
 - `entryPoint`: URI to the entry point. **Required**.
+- `externalContext`: refer to the `@context` instead of embedding. **Recommended**. This requires some additional setup, so it's disabled by default. This should be valued by a URI to the external context.
 - `inflectType`: convert record type name to *PascalCase* in the payload. Default: `true`.
 - `reverseFields`: An object keyed by field names, which should use the `@reverse` property.
 - `contexts`: An array valued by URIs to external contexts.

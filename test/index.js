@@ -7,20 +7,26 @@ const httpTest = require('fortune-http/test/http_test')
 const microApiSerializer = require('../lib')
 const settings = require('../lib/settings')
 
+const reservedKeys = settings.reservedKeys
 const mediaType = settings.mediaType
 const unregisteredMediaType = settings.unregisteredMediaType
 
 const options = {
   entryPoint: 'http://example.com/',
+  externalContext: '/context.jsonld',
   castId: true
 }
 
-const test = httpTest.bind(null, {
+const httpOptions = {
   serializers: [
     [ microApiSerializer, options ],
     [ microApiSerializer.msgpack, options ]
   ]
-})
+}
+
+function test (path, parameters, callback) {
+  return httpTest(httpOptions, path, parameters, callback)
+}
 
 
 run((assert, comment) => {
@@ -44,7 +50,7 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(Object.keys(response.body).length === 6,
+    assert(Object.keys(response.body).length === 5,
       'number of types correct')
   })
 })
@@ -84,7 +90,7 @@ run((assert, comment) => {
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     assert(!('graph' in response.body), 'single record')
-    assert(Object.keys(response.body).length === 7,
+    assert(Object.keys(response.body).length === 6,
       'number of fields correct')
   })
 })
@@ -331,4 +337,34 @@ run((assert, comment) => {
   return test('/foo', { method: 'options' }, response => {
     assert(response.status === 404, 'status is correct')
   })
+})
+
+run((assert, comment) => {
+  comment('show external context')
+
+  let asserts = 0
+
+  const response = {
+    setHeader () {
+      assert(true, 'header is set')
+      asserts++
+    },
+    end (payload, callback) {
+      const context = JSON.parse(payload.toString())[reservedKeys.context]
+      assert(context[reservedKeys.base], 'base is set')
+      assert(context[reservedKeys.vocabulary], 'vocab is set')
+      asserts++
+      callback()
+    }
+  }
+
+  const options = {
+    entryPoint: 'http://example.com',
+    contexts: [],
+    jsonSpaces: 2
+  }
+
+  return microApiSerializer.showExternalContext(response, options)
+    .then(() => assert(asserts === 2, 'all assertions ran'))
+    .catch(() => assert(false, 'something went wrong'))
 })
