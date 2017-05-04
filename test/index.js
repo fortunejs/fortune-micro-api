@@ -50,8 +50,9 @@ run((assert, comment) => {
     assert(response.status === 200, 'status is correct')
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
-    assert(Object.keys(response.body).length === 5,
-      'number of types correct')
+    assert('User' in response.body, 'user type in body')
+    assert('Animal' in response.body, 'animal type in body')
+    assert('☯' in response.body, 'mystery type in body')
   })
 })
 
