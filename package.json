@@ -1,7 +1,7 @@
 {
   "name": "fortune-micro-api",
   "description": "Micro API serializer for Fortune.",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -18,12 +18,12 @@
     "msgpack-lite": "^0.1.26"
   },
   "devDependencies": {
-    "chalk": "^1.1.3",
-    "eslint": "^3.19.0",
+    "chalk": "^2.4.1",
+    "eslint": "^5.6.1",
     "eslint-config-boss": "^1.0.6",
-    "fortune": "^5.2.9",
-    "fortune-http": "^1.1.0",
-    "tapdance": "^5.0.4"
+    "fortune": "^5.5.6",
+    "fortune-http": "^1.2.12",
+    "tapdance": "^5.1.0"
   },
   "files": [
     "lib/",

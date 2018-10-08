@@ -91,7 +91,7 @@ run((assert, comment) => {
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     assert(!('graph' in response.body), 'single record')
-    assert(Object.keys(response.body).length === 6,
+    assert(Object.keys(response.body).length === 7,
       'number of fields correct')
   })
 })
@@ -100,18 +100,19 @@ run((assert, comment) => {
 run((assert, comment) => {
   comment('sort a collection and use sparse fields')
   return test(
-  `/user?${qs.stringify({
-    'sort': [ 'birthday', '-name' ],
-    'fields': [ 'name', 'birthday' ]
-  })}`, null, response => {
-    assert(response.status === 200, 'status is correct')
-    assert(~response.headers['content-type'].indexOf(mediaType),
-      'content type is correct')
-    assert(deepEqual(
-      response.body.graph.map(record => record.name),
-      [ 'John Doe', 'Microsoft Bob', 'Jane Doe' ]),
-      'sort order is correct')
-  })
+    `/user?${qs.stringify({
+      'sort': [ 'birthday', '-name' ],
+      'fields': [ 'name', 'birthday' ]
+    })}`, null, response => {
+      assert(response.status === 200, 'status is correct')
+      assert(~response.headers['content-type'].indexOf(mediaType),
+        'content type is correct')
+      assert(deepEqual(
+        response.body.graph.map(record => record.name),
+        [
+          'John Doe', 'Microsoft Bob', 'Jane Doe'
+        ]), 'sort order is correct')
+    })
 })
 
 
@@ -150,8 +151,7 @@ run((assert, comment) => {
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     assert(Array.isArray(response.body.graph) &&
-      !response.body.graph.length,
-      'payload is empty array')
+      !response.body.graph.length, 'payload is empty array')
   })
 })
 
@@ -177,8 +177,7 @@ run((assert, comment) => {
     assert(~response.headers['content-type'].indexOf(mediaType),
       'content type is correct')
     assert(Array.isArray(response.body.graph) &&
-      !response.body.graph.length,
-      'payload is empty array')
+      !response.body.graph.length, 'payload is empty array')
   })
 })
 
